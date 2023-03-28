@@ -198,3 +198,19 @@ class TestAccountService(TestCase):
         )
          
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_account(self):
+        """It should Delete an existing Account"""
+        # create an Account to delete
+        test_account = AccountFactory()
+        resp = self.client.post(BASE_URL, json=test_account.serialize())
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+        # update the account
+        new_account = resp.get_json()
+
+        response = self.client.delete(
+            f"{BASE_URL}/{new_account['id']}",
+            content_type="application/json" 
+        )
+         
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
