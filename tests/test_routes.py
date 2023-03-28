@@ -130,14 +130,14 @@ class TestAccountService(TestCase):
     def test_read_an_account(self):
         """It should read an exsisting Account"""
         account = self._create_accounts(1)[0]
-  
+
         response = self.client.get(
             f"{BASE_URL}/{account.id}",
-            content_type="application/json" 
+            content_type="application/json"
         )
-         
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-       
+
         data = response.get_json()
 
         self.assertEqual(data["name"], account.name)
@@ -145,31 +145,31 @@ class TestAccountService(TestCase):
         self.assertEqual(data["address"], account.address)
         self.assertEqual(data["phone_number"], account.phone_number)
         self.assertEqual(data["date_joined"], str(account.date_joined))
-    
+
     def test_account_not_found(self):
         """It should read a nonexsisting Account"""
         response = self.client.get(
             f"{BASE_URL}/{0}",
-            content_type="application/json" 
+            content_type="application/json"
         )
-         
+
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_get_account_list(self):
         """It should Get a list of Accounsts"""
         account = self._create_accounts(5)
-  
+
         response = self.client.get(
             BASE_URL,
-            content_type="application/json" 
+            content_type="application/json"
         )
-         
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-       
+
         data = response.get_json()
 
-        self.assertEqual(len(data), 5)
-    
+        self.assertEqual(len(data), len(account))
+
     def test_update_account(self):
         """It should Update an existing Account"""
         # create an Account to update
@@ -178,28 +178,28 @@ class TestAccountService(TestCase):
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
         # update the account
         new_account = resp.get_json()
-  
+
         new_account['name'] = 'foo'
 
         response = self.client.put(
             f"{BASE_URL}/{new_account['id']}",
             json=new_account,
-            content_type="application/json" 
+            content_type="application/json"
         )
-         
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         data = response.get_json()
 
         self.assertEqual(data["name"], 'foo')
-    
+
     def test_account_update_not_found(self):
         """It should update a nonexsisting Account"""
         response = self.client.put(
             f"{BASE_URL}/{0}",
-            content_type="application/json" 
+            content_type="application/json"
         )
-         
+
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete_account(self):
@@ -213,9 +213,9 @@ class TestAccountService(TestCase):
 
         response = self.client.delete(
             f"{BASE_URL}/{new_account['id']}",
-            content_type="application/json" 
+            content_type="application/json"
         )
-         
+
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_method_not_allowed(self):
@@ -235,8 +235,8 @@ class TestAccountService(TestCase):
             'Referrer-Policy': 'strict-origin-when-cross-origin'
         }
         for key, value in headers.items():
-            self.assertEqual(response.headers.get(key), value)     
-    
+            self.assertEqual(response.headers.get(key), value)
+
     def test_cors_security(self):
         """It should return a CORS header"""
         response = self.client.get('/', environ_overrides=HTTPS_ENVIRON)
